@@ -22,4 +22,4 @@ Para criar o arquivo, use a CLI do python da seguinte forma:
 
 python3 <caminho/para/o/módulo>/jinja_template/main.py> <nome-do-arquivo-template> [ <caminho/destino> ] [ --json | --csv ]
 
-O arquivo renderizado será salvo em <caminho-destino> caso esse seja explicitado. Se Ele for omitido, então o arquivo será salvo na pasta *renderizado*.
+O arquivo renderizado será salvo em <caminho/destino> caso esse seja explicitado. Se Ele for omitido, então o arquivo será salvo na pasta *renderizado*.
