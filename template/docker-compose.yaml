@@ -1,0 +1,199 @@
+version: "3.9"
+
+services:
+  {{cliente}}-orchestrator-api:
+    environment:
+      SECRET_ACCESSKEY: ""
+      SECRET_KEY: ""
+      SECRET_NAME: "{{cliente}}"
+      SECRET_REGION_NAME: "us-east-1"
+      DEV_CONNECTION_STRING: "Server=banco-vcm-sqlserver-1;Database=WebService_Demo;User ID=sa;Password=Macanudo1974"
+      OP2B_ORIGEM: "{{cliente}}"
+      ELASTIC_SEARCH_URL: "http://vcm-observability-elasticsearch:9200"
+      VCE_ENDPOINT: "http://{{cliente}}-xml:{{porta_interna}}/api/op2b/create-xml"
+      XML2GDX_ENDPOINT: "http://{{cliente}}-generategdx:{{porta_interna}}/xml2gdx"
+      GDX2MSSQL_ENDPOINT: "http://{{cliente}}-consume-gdx:{{porta_interna}}/gdx2mssql/"
+      ENGINECALCULATE_ENDPOINT: "http://{{cliente}}-optengine-api:{{porta_interna}}/optengine"
+      ADDINWEBAPI_ENDPOINT: "http://{{cliente}}-backendaddin:{{porta_interna}}/api/Redis/scan-refresh"
+      INPUT_GDX_NAME: "Entradas"
+      OUTPUT_GDX_NAME: "Resultados"
+    restart: always
+    image: dockerhubop2b/vcm-optimization-service-orch-api:1.0.11
+    container_name: {{cliente}}-orchestrator-api
+    ports:
+      - "6000:{{porta_interna}}"
+    networks:
+      - banco_vcm-network  
+
+  {{cliente}}-optengine-api:
+    image: dockerhubop2b/vcm-optengine-api:1.0.7
+    restart: always
+    container_name: {{cliente}}-optengine-api
+    ports:
+      - "6003:{{porta_interna}}"
+    environment:
+      ENGINEWORKDIR: "/opt/engine/wkdir"
+      LOGPATH: "/opt/engine/wkdir/logs"
+      MODELSPATH: "/opt/engine/src/modelos"
+      PYSECSCRIPT: "OptEngineCalledStreaming.py"
+      MODELBASENAME: ""
+    volumes:
+      - "/home/ubuntu/volumes/GDX/modelos:/opt/engine/src/modelos"
+      - "/home/ubuntu/volumes/GDX:/opt/engine/wkdir"
+      - "/home/ubuntu/volumes/GDX/gdxtemp:/opt/engine/gdx_temp"
+    networks:
+      - banco_vcm-network 
+      
+  {{cliente}}-xml:
+    image: dockerhubop2b/vcm-xml-refactory-api:12.0.9
+    container_name: {{cliente}}-xml
+    environment:
+      XMLPATH: "/app/wkdir/"
+      DEV_CONNECTION_STRING: "Server=banco-vcm-sqlserver-1;Database=Demo;User ID=sa;Password=Macanudo1974"
+      XMLISTOBEIDENTITY: "false"
+      ISICMSAGREGADO: "true"
+      SECRET_ACCESSKEY: ""
+      SECRET_KEY: ""
+      SECRET_NAME: "{{cliente}}"
+      SECRET_REGION_NAME: "us-east-1"
+      ELASTIC_SEARCH_URL: "http://vcm-observability-elasticsearch:9200"
+      OP2B_ORIGEM: "{{cliente}}"
+    volumes:
+      - "/home/ubuntu/volumes/GDX:/app/wkdir"
+    ports:
+      - "6001:{{porta_interna}}"
+    restart: always
+    networks:
+      - banco_vcm-network
+      
+  {{cliente}}-op2b.utility-api:
+    image: dockerhubop2b/vcm-util:20240508190418
+    container_name: {{cliente}}-op2b.utility-api
+    environment:
+      DEV_CONNECTION_STRING: "Server=banco-vcm-sqlserver-1;Database=Demo;User ID=sa;Password=Macanudo1974"
+      ADDINWEBAPI_ENDPOINT: "http://localhost:6005/api/Redis/scan-refresh"
+      ELASTIC_SEARCH_URL: "true"
+      SECRET_ACCESSKEY: ""
+      SECRET_KEY: ""
+      SECRET_NAME: "{{cliente}}"
+      SECRET_REGION_NAME: "us-east-1"
+      GDXPATH: ""
+      OP2B_ORIGEM: "{{cliente}}"
+    ports:
+      - "6006:{{porta_interna}}"
+    restart: always
+    networks:
+      - banco_vcm-network     
+  
+  {{cliente}}-wizard-clone:
+    image: dockerhubop2b/vcm-clonepluswizard-api:1.8.3
+    container_name: {{cliente}}-golang
+    environment: 
+      APP_PORT: 8080 
+      SQL_SERVER: "10.37.1.59"
+      SQL_PORT: 1433
+      SQL_DB: "Demo"
+      SQL_USER: "sa"
+      SQL_PWD: "Admin123"
+      UPLOAD_FOLDER: "/app"
+      MAXUPLOAD_SIZE_IN_MB: 10
+    working_dir: "/app"
+    command: "./main"
+    ports:
+      - "8666:8080"
+    restart: always
+    networks:
+      - banco_vcm-network 
+      
+  {{cliente}}-generate-gdx:
+    image: dockerhubop2b/vcm-xml2gdx-api:2.1.4
+    restart: always
+    container_name: {{cliente}}-generategdx
+    ports:
+      - "6002:{{porta_interna}}"
+    volumes:
+      - "/home/ubuntu/volumes/GDX:/opt/gams/wkdir"
+    environment:
+      GDX_WORKDIR: "/opt/gams/wkdir"
+    networks:
+      - banco_vcm-network 
+      
+  {{cliente}}-consume-gdx:
+    image: dockerhubop2b/vcm-gdx2mssql-api:2.6.1
+    container_name: {{cliente}}-consumegdx
+    ports:
+      - "6004:{{porta_interna}}"
+    volumes:
+      - "/home/ubuntu/volumes/GDX:/opt/app/wkdir"
+    environment:
+      WORKER_DIR: "/opt/app/wkdir"
+      DATABASE_NAME: "Demo"
+      DATABASE_IP: "banco-vcm-sqlserver-1"
+      DATABASE_PORT: 1433
+      DATABASE_PASSWORD: "Macanudo1974"
+      DATABASE_USER: "sa"
+      DATABASE_ADDIN: ""
+      ENTRADA_EXCLUDES_WHEN_ALLZERO: "cusSeg,pde,CusFixF,CusVarF,valor,Hout,Hin,cusArm,cFin"
+    restart: always
+    networks:
+      - banco_vcm-network 
+      
+  {{cliente}}-backend-addin:
+    image: dockerhubop2b/eurochem-vcm-addin-api:1.0.5
+    container_name: {{cliente}}-backendaddin
+    links:
+      - {{cliente}}-redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SECRET_ACCESSKEY=10.37.1.59
+      - SECRET_KEY=EC_FH
+      - SECRET_NAME=sa
+      - SECRET_REGION_NAME=Admin123
+      - DEV_CONNECTION_STRING=Server=banco-vcm-sqlserver-1;Database=Demo;User ID=sa;Password=Macanudo1974
+      - REDIS_SERVER={{cliente}}-redis
+      - REDIS_PORT=6379
+      - REDIS_PWD=Macanudo1974 
+      - USEREDIS=true
+    ports:
+      - "6005:{{porta_interna}}"    
+    restart: always
+    networks:
+      - banco_vcm-network s
+      
+  {{cliente}}-frontend-addin:
+    environment:
+      APIURL: http://{{cliente}}-backend-addin:{{porta_interna}}
+    restart: always
+    image: dockerhubop2b/vcmaddinfront:2.0
+    container_name: {{cliente}}-frontendaddin
+    ports:
+      - "49160:8080"        
+    networks:
+      - banco_vcm-network 
+      
+  {{cliente}}-redis:
+    container_name: {{cliente}}-redis
+    restart: always
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+    networks:
+      - banco_vcm-network       
+
+  banco-vcm-sqlserver-1:
+    image: mcr.microsoft.com/mssql/server
+    container_name: banco-vcm-sqlserver-1
+    environment:
+      SA_PASSWORD: "Macanudo1974"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1463:1433"
+    networks:
+      - banco_vcm-network
+    volumes:
+      - "/var/opt/mssql/data:/mnt/c/Op2BSuite/BancoDados_Docker"
+
+networks:
+  banco_vcm-network:
+    external: false

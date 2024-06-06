@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<configuration>
+  <configSections>
+    <section name="SafAppConfiguration" type="Promptus.SafApp.Security.Core.Runtime.Configuration.SafAppConfigurationSection, Promptus.SafApp.Security" />
+    <section name="dataConfiguration" type="Microsoft.Practices.EnterpriseLibrary.Data.Configuration.DatabaseSettings, Microsoft.Practices.EnterpriseLibrary.Data, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
+    <section name="log4net" type="System.Configuration.IgnoreSectionHandler" />
+  </configSections>
+  <appSettings>
+    <add key="AppBrandName" value="VCane" />
+    <add key="SafAppidApplication" value="7d8d35c3-3d0e-4d59-a726-1cd7f96662a6" />
+    <add key="SafAppidRepository" value="f4fe8af9-5a1d-478d-9368-ddfcef5c9cf2" />
+    <add key="ConnectionString" value="Server=::1,1463;Database=EC_FH;User ID=sa;Password=Macanudo1974" />
+    <add key="GolangEndPoint" value="http:\\localhost:8666" />
+    <add key="VCEendPoint" value="http://localhost:5000" />
+    <add key="PathToSaveExitXml" value="C:\Op2BSuite\XMLin\" />
+    <add key="IndentXML" value="False" />
+    <add key="CarregarAddinWebservice" value="FALSE" />
+    <add key="CommandTimeout" value="0" />
+    <add key="CopyGamsLog" value="True" />
+    <add key="CaminhoDestinoGamsLog" value="C:\Op2BSuite\GAMSLog" />
+    <add key="Domain" value="OP2BNET.LOCAL" />
+    <add key="OSPlatform" value="x64" />
+    <add key="PersistencyMode" value="Database" />
+    <add key="KeepTemporaryFiles" value="True" />
+    <add key="DefaultPackageAssembly" value="Op2b.Suite.VCane.Package.dll" />
+    <add key="DefaultPackageClassName" value="Op2b.Suite.VCane.Package.Package" />
+    <add key="TabularMaxRows" value="1000" />
+    <add key="TabularMaxColumns" value="500" />
+    <add key="FormulaControl" value="1" />
+    <add key="ColorSupport" value="TRUE" />
+    <add key="RemoteOptimizationHibridXml" value="False" />
+    <add key="RemoteOptimizationInMemory" value="False" />
+    <add key="RemoteOptimization" value="True" />
+    <add key="RemoteOptimizationEngine" value="Solver 24.9" />
+    <add key="RemoteOptimizationModel" value="MO-VCANE-001-rev001.045.gms.crypt" />
+    <add key="SolverEntryMax" value="1" />
+    <add key="SolverEntry0" value="VCane MultiProduto,MO-VCANE-001-Multi_Industria_e_Logistico-rev001.009.gms.crypt,Entradas.gdx,Resultado.gdx" />
+    <add key="PackagesDirectory" value=".\Files\Pacotes" />
+    <add key="SolverModelDirectory" value="C:\Op2BSuite\Modelos" />
+    <add key="SolverExePath" value="C:\GAMS\win64\23.8\gams.exe" />
+    <add key="EngineCommandLineArguments" value="WDIR='$[SolverWorkingDirectory]' SCRDIR='$[SolverWorkingDirectory]' LO=2 OPTDIR='$[SolverModelDirectory]' PUTDIR='$[SolverModelDirectory]' Gdxconvert=v5" />
+    <add key="ClientSettingsProvider.ServiceUri" />
+    <add key="CultureInfo.DataBase" />
+    <add key="RemoteOptimizationCheckInterval" value="0" />
+    <add key="ValidateBeforeExecuteOptimizer" value="True" />
+    <add key="ValidateAfterExecuteOptimizer" value="True" />
+    <add key="SqlPersistTimeout" value="600" />
+    <add key="NewInterfaceAddress" value="http://localhost:4200" />
+    <add key="BrowserToInterface" value="brave" />
+    <add key="EnableMultiWizard" value="False" />
+    <add key="PrivateKeyLocation" value="C:\Op2bSuite\Otimizador\key\EC-FTO-KeyType-ED25519.pem" />
+    <add key="SshUploadHost" value="172.18.205.17" />
+    <add key="SshUploadUser" value="ricardo" />
+    <add key="SshUploadDestination" value="/mnt/e/volumes/gdx/" />
+    <add key="HostWebApiXml2GDX" value="http://localhost:5001/xml2gdx" />
+    <add key="SshUploadPassword" value="248624" />
+    <add key="DevEnv" value="True" />
+  </appSettings>
+  <!-- This section contains the log4net configuration settings -->
+  <log4net>
+    <appender name="LogFileAppender" type="log4net.Appender.RollingFileAppender">
+      <!-- Example using environment variables in params -->
+      <!--<file value="${APPDATA}\Op2b\Op2b VCM Suite\log-file.txt" />-->
+      <file value="${APPDATA}\Op2b\Op2b VCM Suite\Op2B.Log" />
+      <rollingStyle value="Composite" />
+      <datePattern value="yyyyMMdd" />
+      <maxSizeRollBackups value="10" />
+      <maximumFileSize value="1MB" />
+      <layout type="log4net.Layout.XMLLayout" />
+    </appender>
+    <!-- Setup the root category, add the appenders and set the default level -->
+    <root>
+      <level value="ALL" />
+      <appender-ref ref="LogFileAppender" />
+    </root>
+    <!-- Specify the level for some specific categories -->
+    <!--
+		<logger name="ConsoleApp.LoggingExample">
+			<level value="ALL" />
+			<appender-ref ref="RollingLogFileAppender" />
+		</logger>-->
+  </log4net>
+  <system.serviceModel>
+    <bindings>
+      <customBinding>
+        <binding name="compression" sendTimeout="00:10:00" receiveTimeout="00:10:00">
+          <!--<binaryMessageEncoding>
+            <readerQuotas maxStringContentLength="2147483647" maxArrayLength="16384000"/>
+          </binaryMessageEncoding>-->
+          <compactMessageEncoding>
+            <binaryMessageEncoding>
+              <readerQuotas maxStringContentLength="2147483647" maxArrayLength="16384000" />
+            </binaryMessageEncoding>
+          </compactMessageEncoding>
+          <httpTransport maxReceivedMessageSize="2147483647" />
+        </binding>
+      </customBinding>
+    </bindings>
+    <client>
+      <!-- 
+      BRSPSRV07V:8740 => Otimizador Klabin
+      BRSPSRV07V:8750 => Otimizador Privalia
+      BRSPSRV07V:8880 => Otimizador de Teste
+      
+      http://op2bvm02.cloudapp.net:8840/Optimization/ => ?????
+      http://OP2BVM02:8855/Optimization/ => ??????
+      http://BRSPSRV07V:8740/Optimization/ => ??????
+      http://localhost:8790/Optimization/ => local - note DELL Jmiguel
+      -->
+
+      <endpoint address="http://localhost:8920/Optimization/" binding="customBinding" bindingConfiguration="compression" contract="OptimizationServiceReference.IOptimizationService" name="WSHttpBinding_IOptimizationService1">
+        <identity>
+          <dns value="localhost" />
+        </identity>
+      </endpoint>
+    </client>
+    <extensions>
+      <bindingElementExtensions>
+        <add name="compactMessageEncoding" type="Amib.WCF.CompactMessageEncodingElement, CompactMessageEncoder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      </bindingElementExtensions>
+    </extensions>
+  </system.serviceModel>
+  <system.web>
+    <membership defaultProvider="ClientAuthenticationMembershipProvider">
+      <providers>
+        <add name="ClientAuthenticationMembershipProvider" type="System.Web.ClientServices.Providers.ClientFormsAuthenticationMembershipProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" />
+      </providers>
+    </membership>
+    <roleManager enabled="true" defaultProvider="ClientRoleProvider">
+      <providers>
+        <add name="ClientRoleProvider" type="System.Web.ClientServices.Providers.ClientRoleProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" cacheTimeout="86400" />
+      </providers>
+    </roleManager>
+  </system.web>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.0" />
+  </startup>
+</configuration>
