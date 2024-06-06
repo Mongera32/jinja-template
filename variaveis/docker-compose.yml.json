@@ -1,18 +1,18 @@
 {
-    "DEV_CONNECTION_STRING_1":"Geraldo",
-    "DEV_CONNECTION_STRING_2":2424,
-    "SQL_SERVER":"rewrw",
+    "DEV_CONNECTION_STRING_1":"",
+    "DEV_CONNECTION_STRING_2":,
+    "SQL_SERVER":"",
     "SQL_PORT":"",
-    "SQL_DB":"eeew",
-    "SQL_USER":"eee",
-    "SQL_PWD":"ewe",
-    "DATABASE_NAME":"werew",
+    "SQL_DB":"",
+    "SQL_USER":"",
+    "SQL_PWD":"",
+    "DATABASE_NAME":"",
     "DATABASE_IP":"",
     "DATABASE_PORT":"",
-    "DATABASE_PASSWORD":"www",
-    "DATABASE_USER":"rqerew",
-    "SA_PASSWORD":"rreqwr",
-    "ports":"qq",
-    "volumes":"eewwe"
+    "DATABASE_PASSWORD":"",
+    "DATABASE_USER":"",
+    "SA_PASSWORD":"",
+    "ports":"",
+    "volumes":""
 
 }
