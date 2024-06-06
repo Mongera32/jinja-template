@@ -22,13 +22,18 @@ def buscar_dados():
     # define nome do template
     template_nome = sys.argv[1]
 
+    # busca dados de variáveis em arquivo csv
+    if "--csv" in sys.argv:
+        template_nome, variaveis_valores = _buscar_dados_csv(template_nome)
+        return template_nome, variaveis_valores
+
+    # busca dados de variáveis em arquivo json
     if "--json" in sys.argv:
         template_nome, variaveis_valores = _buscar_dados_json(template_nome)
+        return template_nome, variaveis_valores
 
-    else:
-        template_nome, variaveis_valores = _buscar_dados_csv(template_nome)
-
-    # retorna o nome do template e dados de variaveis
+    # se a escolha não for passada, busca dados em json por padrão
+    template_nome, variaveis_valores = _buscar_dados_json(template_nome)
     return template_nome, variaveis_valores
 
 def _buscar_dados_json(template_nome:str):
@@ -44,6 +49,7 @@ def _buscar_dados_json(template_nome:str):
     # retorna o nome do template e dados de variaveis
     return template_nome, variaveis_valores
 
+# TODO busca de dados no csv está incompleto
 def _buscar_dados_csv(template_nome:str):
     """Busca dados contidos no arquivo `.csv`"""
 
@@ -147,4 +153,4 @@ class TemplateRender():
 
 
 if __name__ == "__main__":
-    print(dir_modulo())
+    pass
